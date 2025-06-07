@@ -85,12 +85,12 @@ BEGIN
         hdi
     FROM bronze.covid_raw;
 
-    RAISE NOTICE '👥 Âge médian : MOY = %, MAX = %, MIN = %', moy_age, max_age, min_age;
-    RAISE NOTICE '👵 Population 65+ : MOY = %', aged_65;
-    RAISE NOTICE '🧓 Population 70+ : MOY = %', aged_70;
-    RAISE NOTICE '💉 Prévalence diabète : MOY = %', diabete;
-    RAISE NOTICE '🫀 Taux mortalité cardiovasculaire : MOY = %', cardiaque;
-    RAISE NOTICE '🏥 Indice HDI : MOY = %', hdi;
+    RAISE NOTICE 'Âge médian : MOY = %, MAX = %, MIN = %', moy_age, max_age, min_age;
+    RAISE NOTICE 'Population 65+ : MOY = %', aged_65;
+    RAISE NOTICE 'Population 70+ : MOY = %', aged_70;
+    RAISE NOTICE 'Prévalence diabète : MOY = %', diabete;
+    RAISE NOTICE 'Taux mortalité cardiovasculaire : MOY = %', cardiaque;
+    RAISE NOTICE 'Indice HDI : MOY = %', hdi;
 
     RAISE NOTICE '===================================================================';
 END;

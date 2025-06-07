@@ -11,19 +11,19 @@ DECLARE
     end_time TIMESTAMP;
 BEGIN
     RAISE NOTICE '================================================';
-    RAISE NOTICE '💾 DÉMARRAGE : Chargement Bronze Layer';
+    RAISE NOTICE 'DÉMARRAGE : Chargement Bronze Layer';
     RAISE NOTICE '================================================';
 
     start_time := clock_timestamp();
     
     -- Étape 1 : Vider la table
-    RAISE NOTICE '🧹 Troncature de la table : bronze.covid_data';
+    RAISE NOTICE 'Troncature de la table : bronze.covid_data';
     TRUNCATE TABLE bronze.covid_data;
 
     -- Étape 2 : Chargement CSV
-    RAISE NOTICE '📥 Chargement du fichier CSV vers la table bronze.covid_data';
+    RAISE NOTICE 'Chargement du fichier CSV vers la table bronze.covid_data';
 
-    -- ⚠️ Remplace ce chemin par le chemin réel depuis le serveur PostgreSQL
+    -- Remplace ce chemin par le chemin réel depuis le serveur PostgreSQL
     COPY bronze.covid_data
     FROM 'C:\Users\wamba\Desktop\python\mspr2\etl\datasets\model_covid19_data.csv'
     WITH (

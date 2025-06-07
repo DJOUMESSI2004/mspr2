@@ -8,10 +8,10 @@ RETURNS void
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    RAISE NOTICE '🚿 Nettoyage de la table silver.covid_cleaned...';
+    RAISE NOTICE 'Nettoyage de la table silver.covid_cleaned...';
     TRUNCATE TABLE silver.covid_cleaned;
 
-    RAISE NOTICE '🧼 Insertion des données nettoyées depuis bronze.covid_raw...';
+    RAISE NOTICE 'Insertion des données nettoyées depuis bronze.covid_raw...';
     INSERT INTO silver.covid_cleaned (
         iso_code, continent, country, date,
         total_cases, new_cases, new_cases_smoothed,
@@ -98,7 +98,7 @@ BEGIN
             WHERE t.rn = 1
         );
 
-    RAISE NOTICE '✅ Données nettoyées insérées avec succès dans silver.covid_cleaned.';
+    RAISE NOTICE 'Données nettoyées insérées avec succès dans silver.covid_cleaned.';
 END;
 $$;
 
