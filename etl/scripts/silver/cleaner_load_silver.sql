@@ -8,41 +8,65 @@ RETURNS void
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    /*
-        Script de nettoyage des données COVID-19 pour la couche Silver
-
-        Cette fonction nettoie les données brutes de la couche Bronze et les insère dans la table Silver.
-        Elle effectue les opérations suivantes :
-        1. Filtre les lignes mal formées
-        2. Supprime les lignes totalement vides
-        3. Supprime les lignes absurdes (trop vides ou invalides)
-        4. Supprime les doublons exacts
-        5. Supprime les entrées agrégées (OWID_*)
-        6. Supprime les anciennes données nettoyées si présentes
-        7. Insère les données nettoyées dans silver.covid_cleaned
-    */
-
     RAISE NOTICE '🚿 Nettoyage de la table silver.covid_cleaned...';
     TRUNCATE TABLE silver.covid_cleaned;
 
     RAISE NOTICE '🧼 Insertion des données nettoyées depuis bronze.covid_raw...';
     INSERT INTO silver.covid_cleaned (
         iso_code, continent, country, date,
-        total_cases, new_cases, total_deaths, new_deaths,
-        reproduction_rate, icu_patients, hosp_patients,
-        total_tests, total_vaccinations,
-        population, median_age, aged_65_older, aged_70_older,
-        cardiovasc_death_rate, diabetes_prevalence, human_development_index,
-        excess_mortality
+        total_cases, new_cases, new_cases_smoothed,
+        total_deaths, new_deaths, new_deaths_smoothed,
+        total_cases_per_million, new_cases_per_million, new_cases_smoothed_per_million,
+        total_deaths_per_million, new_deaths_per_million, new_deaths_smoothed_per_million,
+        reproduction_rate, icu_patients, icu_patients_per_million,
+        hosp_patients, hosp_patients_per_million,
+        weekly_icu_admissions, weekly_icu_admissions_per_million,
+        weekly_hosp_admissions, weekly_hosp_admissions_per_million,
+        total_tests, new_tests, total_tests_per_thousand,
+        new_tests_per_thousand, new_tests_smoothed, new_tests_smoothed_per_thousand,
+        positive_rate, tests_per_case, tests_units,
+        total_vaccinations, people_vaccinated, people_fully_vaccinated,
+        total_boosters, new_vaccinations, new_vaccinations_smoothed,
+        total_vaccinations_per_hundred, people_vaccinated_per_hundred,
+        people_fully_vaccinated_per_hundred, total_boosters_per_hundred,
+        new_vaccinations_smoothed_per_million, new_people_vaccinated_smoothed,
+        new_people_vaccinated_smoothed_per_hundred,
+        stringency_index, population_density, median_age, aged_65_older,
+        aged_70_older, gdp_per_capita, extreme_poverty,
+        cardiovasc_death_rate, diabetes_prevalence,
+        female_smokers, male_smokers, handwashing_facilities,
+        hospital_beds_per_thousand, life_expectancy,
+        human_development_index, population,
+        excess_mortality_cumulative_absolute, excess_mortality_cumulative,
+        excess_mortality, excess_mortality_cumulative_per_million
     )
     SELECT
-        iso_code, continent, location, date,
-        total_cases, new_cases, total_deaths, new_deaths,
-        reproduction_rate, icu_patients, hosp_patients,
-        total_tests, total_vaccinations,
-        population, median_age, aged_65_older, aged_70_older,
-        cardiovasc_death_rate, diabetes_prevalence, human_development_index,
-        excess_mortality
+        iso_code, continent, location AS country, date,
+        total_cases, new_cases, new_cases_smoothed,
+        total_deaths, new_deaths, new_deaths_smoothed,
+        total_cases_per_million, new_cases_per_million, new_cases_smoothed_per_million,
+        total_deaths_per_million, new_deaths_per_million, new_deaths_smoothed_per_million,
+        reproduction_rate, icu_patients, icu_patients_per_million,
+        hosp_patients, hosp_patients_per_million,
+        weekly_icu_admissions, weekly_icu_admissions_per_million,
+        weekly_hosp_admissions, weekly_hosp_admissions_per_million,
+        total_tests, new_tests, total_tests_per_thousand,
+        new_tests_per_thousand, new_tests_smoothed, new_tests_smoothed_per_thousand,
+        positive_rate, tests_per_case, tests_units,
+        total_vaccinations, people_vaccinated, people_fully_vaccinated,
+        total_boosters, new_vaccinations, new_vaccinations_smoothed,
+        total_vaccinations_per_hundred, people_vaccinated_per_hundred,
+        people_fully_vaccinated_per_hundred, total_boosters_per_hundred,
+        new_vaccinations_smoothed_per_million, new_people_vaccinated_smoothed,
+        new_people_vaccinated_smoothed_per_hundred,
+        stringency_index, population_density, median_age, aged_65_older,
+        aged_70_older, gdp_per_capita, extreme_poverty,
+        cardiovasc_death_rate, diabetes_prevalence,
+        female_smokers, male_smokers, handwashing_facilities,
+        hospital_beds_per_thousand, life_expectancy,
+        human_development_index, population,
+        excess_mortality_cumulative_absolute, excess_mortality_cumulative,
+        excess_mortality, excess_mortality_cumulative_per_million
     FROM bronze.covid_raw
     WHERE
         iso_code IS NOT NULL
@@ -50,7 +74,6 @@ BEGIN
         AND date IS NOT NULL
         AND iso_code NOT LIKE 'OWID_%'
         AND continent IS NOT NULL
-
         AND (
             total_cases IS NOT NULL OR
             new_cases IS NOT NULL OR
@@ -60,13 +83,11 @@ BEGIN
             total_vaccinations IS NOT NULL OR
             excess_mortality IS NOT NULL
         )
-
         AND NOT (
             COALESCE(total_cases, 0) = 0 AND
             COALESCE(new_cases, 0) = 0 AND
             COALESCE(total_deaths, 0) = 0
         )
-
         AND (iso_code, location, date) IN (
             SELECT iso_code, location, date
             FROM (
@@ -81,10 +102,8 @@ BEGIN
 END;
 $$;
 
--- Définir le propriétaire si besoin
+-- Changer le propriétaire de la fonction pour l'utilisateur postgres
 ALTER FUNCTION silver.clean_bronze() OWNER TO postgres;
-
-
 
 -- utiliser la fonction pour nettoyer les données
 SELECT silver.clean_bronze();
