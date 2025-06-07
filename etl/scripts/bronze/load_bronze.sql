@@ -29,8 +29,8 @@ BEGIN
     WITH (
         FORMAT csv,
         HEADER true,
-        DELIMITER ',',
-        NULL '',
+        DELIMITER ',', -- Utilise la virgule comme délimiteur
+        NULL '', -- Traite les valeurs NULL comme des chaînes vides pour éviter les erreurs
         ENCODING 'UTF8'
     );
 
