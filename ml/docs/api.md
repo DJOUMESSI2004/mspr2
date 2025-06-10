@@ -45,7 +45,7 @@ L’API attend un objet JSON contenant les **11 variables** utilisées lors de l
 }
 ```
 
-<img src="schema_pdt.png" alt="API Structure" width="500" height="300">
+<img src="schema_pdt.png" alt="API Structure" width="600" height="800">
 
 Ces variables sont typées et validées avec une classe **BaseModel** de **Pydantic** :
 
