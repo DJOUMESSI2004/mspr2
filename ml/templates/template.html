@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Test Prédiction COVID</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 50px;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 650px;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        select,
+        input[type=submit] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .result {
+            font-size: 22px;
+            color: green;
+            text-align: center;
+            font-weight: bold;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        input[type=submit] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        input[type=submit]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <small style="display: block; text-align: center; margin-bottom: 20px; color: #f71212;">
+            <strong>Note :</strong>
+            Ceci est un formulaire de test backend pour la prédiction de nouveaux cas de COVID-19.
+            <br>
+        </small>
+        <h2>🧪 Formulaire de prédiction COVID-19 Pour le Canada (Nouveuas Cas)</h2>
+        <form action="/form_predict" method="post">
+            <label>Cas d'hier</label>
+            <select name="new_cases_lag1">
+                <option value="100">100</option>
+                <option value="500">500</option>
+                <option value="1000">1000</option>
+                <option value="2000">2000</option>
+                <option value="3000">3000</option>
+                <option value="4000">4000</option>
+            </select>
+
+            <label>Cas il y a 7 jours</label>
+            <select name="new_cases_lag7">
+                <option value="100">100</option>
+                <option value="600">600</option>
+                <option value="1200">1200</option>
+                <option value="2400">2400</option>
+                <option value="3600">3600</option>
+                <option value="4800">4800</option>
+            </select>
+
+            <label>Moyenne mobile 7j</label>
+            <select name="new_cases_ma7">
+                <option value="150">150</option>
+                <option value="700">700</option>
+                <option value="1400">1400</option>
+                <option value="2800">2800</option>
+                <option value="4200">4200</option>
+                <option value="5600">5600</option>
+            </select>
+
+            <label>Taux de croissance</label>
+            <select name="growth_rate">
+                <option value="0.01">1%</option>
+                <option value="0.05">5%</option>
+                <option value="0.1">10%</option>
+                <option value="0.15">15%</option>
+                <option value="0.20">20%</option>
+                <option value="0.25">25%</option>
+            </select>
+
+            <label>Taux de reproduction</label>
+            <select name="reproduction_rate">
+                <option value="1.0">1.0</option>
+                <option value="1.2">1.2</option>
+                <option value="1.5">1.5</option>
+                <option value="1.8">1.8</option>
+                <option value="2.0">2.0</option>
+                <option value="2.5">2.5</option>
+            </select>
+
+            <label>Taux de positivité</label>
+            <select name="positive_rate">
+                <option value="0.05">5%</option>
+                <option value="0.10">10%</option>
+                <option value="0.20">20%</option>
+                <option value="0.30">30%</option>
+                <option value="0.40">40%</option>
+                <option value="0.50">50%</option>
+            </select>
+
+            <label>Patients en soins intensifs</label>
+            <select name="icu_patients">
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+                <option value="300">300</option>
+                <option value="400">400</option>
+            </select>
+
+            <label>Patients hospitalisés</label>
+            <select name="hosp_patients">
+                <option value="100">100</option>
+                <option value="300">300</option>
+                <option value="500">500</option>
+                <option value="1000">1000</option>
+                <option value="1500">1500</option>
+                <option value="2000">2000</option>
+            </select>
+
+            <label>Indice de rigueur sanitaire</label>
+            <select name="stringency_index">
+                <option value="30">30</option>
+                <option value="60">60</option>
+                <option value="90">90</option>
+            </select>
+
+            <label>Taux de vaccination</label>
+            <select name="vaccinated_rate">
+                <option value="0.3">30%</option>
+                <option value="0.5">50%</option>
+                <option value="0.6">60%</option>
+                <option value="0.9">90%</option>
+
+            </select>
+
+            <label>Taux de rappel</label>
+            <select name="boosted_rate">
+                <option value="0.1">10%</option>
+                <option value="0.2">25%</option>
+                <option value="0.4">40%</option>
+                <option value="0.7">70%</option>
+            </select>
+
+            <input type="submit" value="📈 Prédire">
+        </form>
+    </div>
+</body>
+
+</html>
+
+{% if prediction is not none %}
+<div class="result">✅ Prédiction : {{ prediction }} nouveaux cas estimés (Canada)</div>
+{% else %}
+
+</div>
+{% endif %}
+{% if error %}
+<div class="result" style="color: red;">❌ Une Erreur c'est produite lors de la prédiction: {{ error }}</div>
+{% endif %}
