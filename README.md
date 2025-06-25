@@ -1,5 +1,7 @@
 # Projet MSPR - Modèle Prédictif IA sur les Données COVID-19
 
+![Couverture Projet MSPR](assets/architecture.png)
+
 ## 📋 Cahier des Charges
 
 **Bloc de Compétences E6.2**  
