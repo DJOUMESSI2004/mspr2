@@ -30,7 +30,7 @@ async def show_form(request: Request):
     return templates.TemplateResponse("template.html", {"request": request, "prediction": None})
 
 # Traitement du formulaire (POST)
-@app.post("/form_predict", response_class=HTMLResponse)
+@app.post("/canada/new-cases", response_class=HTMLResponse)
 async def form_predict(
     request: Request,
     new_cases_lag1: float = Form(...),

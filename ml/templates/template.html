@@ -76,8 +76,9 @@
             <br>
         </small>
         <h2>🧪 Formulaire de prédiction COVID-19 Pour le Canada (Nouveuas Cas)</h2>
-        <form action="/form_predict" method="post">
+        <form action="/canada/new-cases" method="post">
             <label>Cas d'hier</label>
+            <p style="font-size: 0.8em; color: #555;">(C'est-à-dire le nombre de nouveaux cas enregistrés hier)</p>
             <select name="new_cases_lag1">
                 <option value="100">100</option>
                 <option value="500">500</option>
@@ -88,6 +89,7 @@
             </select>
 
             <label>Cas il y a 7 jours</label>
+            <p style="font-size: 0.8em; color: #555;">(C'est-à-dire le nombre de nouveaux cas enregistrés il y a 7 jours)</p>
             <select name="new_cases_lag7">
                 <option value="100">100</option>
                 <option value="600">600</option>
@@ -95,9 +97,11 @@
                 <option value="2400">2400</option>
                 <option value="3600">3600</option>
                 <option value="4800">4800</option>
+                <option value="6000">6000</option>
             </select>
 
             <label>Moyenne mobile 7j</label>
+            <p style="font-size: 0.8em; color: #555;">(C'est-à-dire la moyenne des nouveaux cas sur les 7 derniers jours)</p>
             <select name="new_cases_ma7">
                 <option value="150">150</option>
                 <option value="700">700</option>
@@ -105,9 +109,11 @@
                 <option value="2800">2800</option>
                 <option value="4200">4200</option>
                 <option value="5600">5600</option>
+                <option value="7000">7000</option>
             </select>
 
             <label>Taux de croissance</label>
+            <p style="font-size: 0.8em; color: #555;">(C'est-à-dire le pourcentage de croissance des nouveaux cas par rapport à la semaine précédente)</p>
             <select name="growth_rate">
                 <option value="0.01">1%</option>
                 <option value="0.05">5%</option>
@@ -118,6 +124,7 @@
             </select>
 
             <label>Taux de reproduction</label>
+            <p style="font-size: 0.8em; color: #555;">(C'est-à-dire le nombre moyen de personnes infectées par une personne infectée)</p>
             <select name="reproduction_rate">
                 <option value="1.0">1.0</option>
                 <option value="1.2">1.2</option>
@@ -128,6 +135,7 @@
             </select>
 
             <label>Taux de positivité</label>
+            <p style="font-size: 0.8em; color: #555;">(C'est-à-dire le pourcentage de tests COVID-19 positifs par rapport au nombre total de tests effectués)</p>
             <select name="positive_rate">
                 <option value="0.05">5%</option>
                 <option value="0.10">10%</option>
@@ -138,6 +146,7 @@
             </select>
 
             <label>Patients en soins intensifs</label>
+            <p style="font-size: 0.8em; color: #555;">(C'est-à-dire le nombre total de patients en soins intensifs pour COVID-19)</p>
             <select name="icu_patients">
                 <option value="20">20</option>
                 <option value="50">50</option>
@@ -148,6 +157,7 @@
             </select>
 
             <label>Patients hospitalisés</label>
+            <p style="font-size: 0.8em; color: #555;">(C'est-à-dire le nombre total de patients hospitalisés pour COVID-19)</p>
             <select name="hosp_patients">
                 <option value="100">100</option>
                 <option value="300">300</option>
@@ -157,14 +167,15 @@
                 <option value="2000">2000</option>
             </select>
 
-            <label>Indice de rigueur sanitaire</label>
+            <label>Indice de rigueur sanitaire ( C'est-à-dire le niveau de restrictions sanitaires )</label>
+            <p style="font-size: 0.8em; color: #555;">(30 = restrictions légères, 60 = Restrictions modérées, 90 = Restrictions strictes)</p>
             <select name="stringency_index">
                 <option value="30">30</option>
                 <option value="60">60</option>
                 <option value="90">90</option>
             </select>
-
             <label>Taux de vaccination</label>
+            <p style="font-size: 0.8em; color: #555;">C'est-à-dire le pourcentage de la population ayant reçu au moins une dose de vaccin contre la COVID-19</p>
             <select name="vaccinated_rate">
                 <option value="0.3">30%</option>
                 <option value="0.5">50%</option>
@@ -174,6 +185,7 @@
             </select>
 
             <label>Taux de rappel</label>
+            <p style="font-size: 0.8em; color: #555;">C'est-à-dire le pourcentage de la population ayant reçu un rappel de vaccin contre la COVID-19</p>
             <select name="boosted_rate">
                 <option value="0.1">10%</option>
                 <option value="0.2">25%</option>

@@ -1,4 +1,4 @@
-# API de Prédiction COVID-19
+# API de Prédiction COVID-19 (a modifier)
 
 ## 1. Structure générale
 
@@ -6,8 +6,8 @@ L’API est construite avec **FastAPI**, un framework web rapide pour créer des
 
 Elle expose deux types d’accès :
 
-* Une route `/predict` pour les appels API (format JSON), utile pour d’autres systèmes ou applications front-end.
-* Une route `/` et `/form_predict` qui affichent un formulaire HTML pour tester manuellement dans un navigateur.
+- Un endpoint `/canada/new-cases` qui permet de faire des prédictions de nouveaux cas de COVID-19 en envoyant des données au format JSON.
+- Un endpoint `/docs` qui fournit une documentation interactive de l’API, générée automatiquement
 
 ## 2. Chargement du modèle
 
@@ -64,9 +64,9 @@ class PredictionInput(BaseModel):
     boosted_rate: float
 ```
 
-## 4. Endpoint `/predict` (POST)
+## 4. Endpoint `/canada/new-cases` (POST)
 
-Lorsqu’on envoie une requête **POST** à `/predict`, voici ce qu’il se passe :
+Lorsqu’on envoie une requête **POST** à `/canada/new-cases`, voici ce qu’il se passe :
 
 1. Les données JSON sont converties en objet Python (**PredictionInput**)
 2. Ces valeurs sont transformées en tableau **NumPy** :
@@ -88,24 +88,3 @@ prediction = model.predict(features)[0]
   "predicted_new_cases": 752.43
 }
 ```
-
-## 5. Interface HTML `/`
-
-Vous pouvez aussi accéder à un petit formulaire HTML via la route `/` pour tester sans code.
-
-Les étapes sont :
-
-* Les données saisies dans le formulaire sont envoyées à `/form_predict`
-* Le serveur convertit les champs du formulaire en **float**
-* Le tableau **NumPy** est préparé
-* Le modèle prédit avec `model.predict(...)`
-* Le résultat est affiché directement dans la page HTML
-
----
-
-## 🔗 Récapitulatif des routes
-
-* `POST /predict` : API REST
-* `GET /` : Formulaire HTML
-* `POST /form_predict` : Traitement du formulaire et affichage du résultat.
-  
