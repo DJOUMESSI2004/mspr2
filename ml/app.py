@@ -19,7 +19,8 @@ app.add_middleware(
 )
 
 # Chargement du modèle
-model = joblib.load("model/rf_model_canada.joblib")
+model_canada = joblib.load("model/rf_model_canada.joblib")
+model_any_country = joblib.load("model/rf_model_global.joblib")
 
 # Configuration des templates
 templates = Jinja2Templates(directory="templates")
@@ -29,7 +30,7 @@ templates = Jinja2Templates(directory="templates")
 async def show_form(request: Request):
     return templates.TemplateResponse("template.html", {"request": request, "prediction": None})
 
-# Traitement du formulaire (POST)
+# Traitement du formulaire (POST) pour la prédiction des nouveaux cas au Canada
 @app.post("/canada/new-cases", response_class=HTMLResponse)
 async def form_predict(
     request: Request,
@@ -50,9 +51,8 @@ async def form_predict(
         reproduction_rate, positive_rate, icu_patients, hosp_patients,
         stringency_index, vaccinated_rate, boosted_rate
     ]])
-    prediction = model.predict(features)[0]
+    prediction = model_canada.predict(features)[0]
     return templates.TemplateResponse("template.html", {
         "request": request,
         "prediction": round(prediction, 0) # Arrondi à l'entier le plus proche
     })
-# Modèle de données pour la prédiction
