@@ -3,13 +3,27 @@ import os
 from unittest.mock import MagicMock
 import pytest
 
-# Ajouter le chemin pour importer app.py
+# Ajoute le dossier parent (ml/) au chemin pour pouvoir importer app.py
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-# 📌 Monkeypatch joblib.load avant d'importer app.py
+# On intercepte l'import de joblib avant que app.py le fasse
 import joblib
 
+# Fonction de remplacement pour joblib.load, utilisée à la place des modèles .pkl
 def fake_load(path):
+    """
+    Cette fonction remplace joblib.load() pendant les tests.
+
+    Elle évite l'erreur FileNotFoundError lorsque app.py essaie de charger des modèles
+    (.pkl) qui ne sont pas présents dans le dépôt GitHub (car ils ne doivent pas y être).
+
+    En fonction du nom du fichier modèle (`path`), elle retourne un faux modèle (DummyModel)
+    qui simule la méthode predict().
+    - Si le nom du modèle contient 'tendance', on retourne "hausse"
+    - Sinon, on retourne 1234 (valeur arbitraire)
+
+    Cela permet de tester toute l'API sans dépendance aux modèles réels.
+    """
     class DummyModel:
         def predict(self, X):
             if "tendance" in path:
@@ -17,14 +31,17 @@ def fake_load(path):
             return [1234]
     return DummyModel()
 
-joblib.load = fake_load  # ⛔ intercepte le vrai chargement .pkl
+# On remplace joblib.load globalement par fake_load
+joblib.load = fake_load
 
-# Maintenant on peut importer app sans que ça plante
+# Maintenant que joblib est remplacé, on peut importer app.py sans que ça plante
 import app
 from fastapi.testclient import TestClient
 
+# Client de test pour simuler les requêtes à l'API
 client = TestClient(app.app)
 
+# === TEST 1 : prédiction des cas ===
 def test_predict_cases():
     response = client.post("/canada/predict-cases", data={
         "new_cases_lag1": 100,
@@ -41,6 +58,7 @@ def test_predict_cases():
     })
     assert response.status_code == 200
 
+# === TEST 2 : prédiction de tendance ===
 def test_predict_tendance():
     response = client.post("/canada/predict-tendance", data={
         "new_cases_7d_avg": 100,
@@ -56,6 +74,7 @@ def test_predict_tendance():
     })
     assert response.status_code == 200
 
+# === TEST 3 : prédiction combinée (/predict-all) ===
 def test_predict_all():
     response = client.post("/canada/predict-all", data={
         "new_cases_lag1": 100,
