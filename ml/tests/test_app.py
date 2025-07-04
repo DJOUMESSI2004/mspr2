@@ -1,13 +1,23 @@
 import sys
 import os
+from unittest.mock import MagicMock
+import pytest
 
-# Permet à Python de trouver app.py
+# Assurer que app.py est trouvable
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from fastapi.testclient import TestClient
-from app import app
+import app
 
 client = TestClient(app)
+
+@pytest.fixture(autouse=True)
+def mock_models(monkeypatch):
+    mock_model = MagicMock()
+    mock_model.predict.return_value = [1234]  # Valeur simulée pour tous les tests
+
+    # Remplacer les fonctions get_model_cas et get_model_tendance
+    monkeypatch.setattr(app, "get_model_cas", lambda: mock_model)
+    monkeypatch.setattr(app, "get_model_tendance", lambda: mock_model)
 
 def test_predict_cases():
     response = client.post("/canada/predict-cases", data={
@@ -24,6 +34,7 @@ def test_predict_cases():
         "boosted_rate": 25.0
     })
     assert response.status_code == 200
+    assert "1234" in response.text
 
 def test_predict_tendance():
     response = client.post("/canada/predict-tendance", data={
@@ -39,6 +50,7 @@ def test_predict_tendance():
         "stringency_index": 70.5
     })
     assert response.status_code == 200
+    assert "1234" in response.text
 
 def test_predict_all():
     response = client.post("/canada/predict-all", data={
@@ -62,5 +74,4 @@ def test_predict_all():
         "people_vaccinated": 15000000
     })
     assert response.status_code == 200
-
-
+    assert "1234" in response.text
