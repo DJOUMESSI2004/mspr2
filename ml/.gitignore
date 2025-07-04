@@ -38,3 +38,9 @@ ENV/
 # Ignore system files
 .DS_Store
 Thumbs.db
+
+# Ignore IDE specific files
+.vscode/
+.idea/
+*.sublime-workspace
+# Ignore configuration files
