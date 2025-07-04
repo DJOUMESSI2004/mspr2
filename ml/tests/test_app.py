@@ -1,10 +1,20 @@
+import sys
+import os
+
+# Ajout du chemin pour accéder à app.py
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from fastapi.testclient import TestClient
-from unittest.mock import MagicMock
 import app
 
-# Mock les modèles AVANT de créer le client
-app.get_model_cas = lambda: MagicMock(predict=lambda x: [1234])
-app.get_model_tendance = lambda: MagicMock(predict=lambda x: ["hausse"])
+# 🎭 Mock simple des modèles
+class DummyModel:
+    def predict(self, X):
+        return ["mock"]  # ou [1234] selon le endpoint
+
+# Remplace les vrais modèles par des mocks
+app.get_model_cas = lambda: DummyModel()
+app.get_model_tendance = lambda: DummyModel()
 
 client = TestClient(app.app)
 
