@@ -1,33 +1,36 @@
-# API de Prédiction COVID-19 (a modifier)
+# API de Prédiction COVID-19 (Canada)
 
 ## 1. Structure générale
+L'API est développée avec **FastAPI**. Elle permet de prédire :
+- le **nombre de nouveaux cas** quotidiens
+- la **tendance épidémique** (hausse, baisse ou stable)
+- ou les deux en même temps via `/predict-all`
 
-L’API est construite avec **FastAPI**, un framework web rapide pour créer des services REST en Python.
+---
 
-Elle expose deux types d’accès :
+## 2. Modèles IA utilisés
+- `model_xgboost_covid.pkl` → prédiction du nombre de nouveaux cas (modèle XGBoost)
+- `modele_tendance_covid_rf.pkl` → classification de la tendance (modèle RandomForestClassifier)
 
-- Un endpoint `/canada/new-cases` qui permet de faire des prédictions de nouveaux cas de COVID-19 en envoyant des données au format JSON.
-- Un endpoint `/docs` qui fournit une documentation interactive de l’API, générée automatiquement
+---
 
-## 2. Chargement du modèle
+## 3. Endpoints disponibles
 
-Le modèle est chargé avec **joblib** :
+### `/canada/predict-cases` (POST)
+Prédit le nombre de nouveaux cas.
 
-```python
-model = joblib.load("rf_model_canada.joblib")
-```
+### `/canada/predict-tendance` (POST)
+Classifie la tendance : hausse, baisse ou stable.
 
-Ce fichier `.joblib` contient le modèle **Random Forest** entraîné au préalable dans un notebook.
+### `/canada/predict-all` (POST)
+Fait les deux prédictions à la fois.
 
-Ce modèle a été sauvegardé avec :
+### `/` (GET)
+Affiche le formulaire HTML avec tous les champs.
 
-```python
-joblib.dump(model, "rf_model_canada.joblib")
-```
+---
 
-## 3. Schéma de données d’entrée
-
-L’API attend un objet JSON contenant les **11 variables** utilisées lors de l’entraînement du modèle :
+## 4. Données d'entrée attendues (`/predict-all`)
 
 ```json
 {
@@ -41,50 +44,62 @@ L’API attend un objet JSON contenant les **11 variables** utilisées lors de l
   "hosp_patients": 200,
   "stringency_index": 70.5,
   "vaccinated_rate": 65.0,
-  "boosted_rate": 25.0
+  "boosted_rate": 25.0,
+  "new_cases_7d_avg": 500,
+  "new_deaths_7d_avg": 50,
+  "lag_1": 500,
+  "lag_2": 480,
+  "lag_7": 460,
+  "month": 6,
+  "day_of_week": 3,
+  "people_vaccinated": 15000000
 }
 ```
 
-<img src="schema_pdt.png" alt="API Structure" width="600" height="800">
+---
 
-Ces variables sont typées et validées avec une classe **BaseModel** de **Pydantic** :
-
-```python
-class PredictionInput(BaseModel):
-    new_cases_lag1: float
-    new_cases_lag7: float
-    new_cases_ma7: float
-    growth_rate: float
-    reproduction_rate: float
-    positive_rate: float
-    icu_patients: float
-    hosp_patients: float
-    stringency_index: float
-    vaccinated_rate: float
-    boosted_rate: float
-```
-
-## 4. Endpoint `/canada/new-cases` (POST)
-
-Lorsqu’on envoie une requête **POST** à `/canada/new-cases`, voici ce qu’il se passe :
-
-1. Les données JSON sont converties en objet Python (**PredictionInput**)
-2. Ces valeurs sont transformées en tableau **NumPy** :
-
-```python
-features = np.array([[val1, val2, ..., val11]])
-```
-
-3. Le modèle effectue une prédiction :
-
-```python
-prediction = model.predict(features)[0]
-```
-
-4. L’API retourne un JSON avec la prédiction :
+## 5. Réponse JSON attendue
 
 ```json
 {
-  "predicted_new_cases": 752.43
+  "prediction_nouveaux_cas": 2134.0,
+  "prediction_tendance": "hausse"
 }
 ```
+
+---
+
+## 6. Front-End
+Un formulaire HTML (à la racine `/`) permet de sélectionner des valeurs prédéfinies et de tester facilement l'API.
+
+---
+
+## 7. Test API avec `curl`
+
+```bash
+curl -X POST http://localhost:8000/canada/predict-all \
+-F "new_cases_lag1=500" \
+-F "new_cases_lag7=600" \
+-F "new_cases_ma7=550" \
+-F "growth_rate=1.05" \
+-F "reproduction_rate=1.1" \
+-F "positive_rate=0.15" \
+-F "icu_patients=50" \
+-F "hosp_patients=200" \
+-F "stringency_index=70" \
+-F "vaccinated_rate=0.6" \
+-F "boosted_rate=0.3" \
+-F "new_cases_7d_avg=500" \
+-F "new_deaths_7d_avg=40" \
+-F "lag_1=500" \
+-F "lag_2=480" \
+-F "lag_7=460" \
+-F "month=6" \
+-F "day_of_week=3" \
+-F "people_vaccinated=15000000"
+```
+
+---
+
+## 8. Structure des modèles
+Les modèles sont entraînés et exportés avec `joblib` depuis des notebooks Jupyter.
