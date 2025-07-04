@@ -62,3 +62,5 @@ def test_predict_all():
         "people_vaccinated": 15000000
     })
     assert response.status_code == 200
+
+
