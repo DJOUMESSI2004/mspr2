@@ -1,4 +1,4 @@
-name: ⚙️ Test API COVID
+name: Test API COVID
 
 on:
   push:
