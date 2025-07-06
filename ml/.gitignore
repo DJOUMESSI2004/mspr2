@@ -31,6 +31,9 @@ ENV/
 *.pkl
 *.onnx
 
+# ignore model generated results
+results-model-2025/*.json
+
 # Ignore logs and outputs
 *.log
 *.out

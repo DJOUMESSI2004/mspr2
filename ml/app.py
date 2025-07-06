@@ -141,3 +141,51 @@ async def predict_all(
             "prediction": None,
             "error": str(e)
         })
+
+
+# Création du second endpoint JSON, pour les appels automatisés pour la simulation de 2025 
+@app.post("/api/canada/predict-all-json")
+async def predict_all_json(
+    new_cases_lag1: float = Form(...),
+    new_cases_lag7: float = Form(...),
+    new_cases_ma7: float = Form(...),
+    reproduction_rate: float = Form(...),
+    positive_rate: float = Form(...),
+    icu_patients: float = Form(...),
+    hosp_patients: float = Form(...),
+    stringency_index: float = Form(...),
+    vaccinated_rate: float = Form(...),
+    boosted_rate: float = Form(...),
+    new_cases_7d_avg: float = Form(...),
+    new_deaths_7d_avg: float = Form(...),
+    lag_1: float = Form(...),
+    lag_2: float = Form(...),
+    lag_7: float = Form(...),
+    month: int = Form(...),
+    day_of_week: int = Form(...),
+    people_vaccinated: float = Form(...)
+):
+    try:
+        # Préparation des données pour la prédiction des cas
+        features_cas = np.array([[
+            new_cases_lag1, new_cases_lag7, new_cases_ma7,
+            reproduction_rate, positive_rate, icu_patients, hosp_patients,
+            stringency_index, vaccinated_rate, boosted_rate
+        ]])
+        prediction_cas = model_cas.predict(features_cas)[0]
+
+        # Préparation des données pour la prédiction de la tendance
+        features_tendance = np.array([[
+            new_cases_7d_avg, new_deaths_7d_avg, lag_1, lag_2, lag_7,
+            month, day_of_week, reproduction_rate,
+            people_vaccinated, stringency_index
+        ]])
+        prediction_tendance = model_tendance.predict(features_tendance)[0]
+
+        return JSONResponse(content={
+            "prediction_nouveaux_cas": round(float(prediction_cas), 2),
+            "prediction_tendance": prediction_tendance
+        })
+
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
