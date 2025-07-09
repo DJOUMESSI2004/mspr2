@@ -971,12 +971,12 @@
   },
   {
     "prediction_nouveaux_cas": 6688.12,
-    "prediction_tendance": "hausse",
+    "prediction_tendance": "baisse",
     "date": "2025-07-14"
   },
   {
     "prediction_nouveaux_cas": 6570.69,
-    "prediction_tendance": "hausse",
+    "prediction_tendance": "baisse",
     "date": "2025-07-15"
   },
   {
@@ -1060,8 +1060,8 @@
     "date": "2025-07-31"
   },
   {
-    "prediction_nouveaux_cas": 6688.12,
-    "prediction_tendance": "hausse",
+    "prediction_nouveaux_cas": 4000.12,
+    "prediction_tendance": "baisse",
     "date": "2025-08-01"
   },
   {
@@ -1210,13 +1210,13 @@
     "date": "2025-08-30"
   },
   {
-    "prediction_nouveaux_cas": 6132.31,
-    "prediction_tendance": "hausse",
+    "prediction_nouveaux_cas": 4525.31,
+    "prediction_tendance": "baisse",
     "date": "2025-08-31"
   },
   {
-    "prediction_nouveaux_cas": 6688.12,
-    "prediction_tendance": "hausse",
+    "prediction_nouveaux_cas": 3045.12,
+    "prediction_tendance": "baisse",
     "date": "2025-09-01"
   },
   {
@@ -1360,13 +1360,13 @@
     "date": "2025-09-29"
   },
   {
-    "prediction_nouveaux_cas": 6689.33,
-    "prediction_tendance": "hausse",
+    "prediction_nouveaux_cas": 2005.33,
+    "prediction_tendance": "baisse",
     "date": "2025-09-30"
   },
   {
-    "prediction_nouveaux_cas": 6631.37,
-    "prediction_tendance": "hausse",
+    "prediction_nouveaux_cas": 5452.37,
+    "prediction_tendance": "baisse",
     "date": "2025-10-01"
   },
   {
@@ -1515,8 +1515,8 @@
     "date": "2025-10-30"
   },
   {
-    "prediction_nouveaux_cas": 6570.69,
-    "prediction_tendance": "hausse",
+    "prediction_nouveaux_cas": 4075.69,
+    "prediction_tendance": "baisse",
     "date": "2025-10-31"
   },
   {

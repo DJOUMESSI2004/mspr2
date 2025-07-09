@@ -26,7 +26,7 @@ model_tendance = joblib.load("model/modele_tendance_covid_rf.pkl")
 templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
-async def index(request: Request):
+async def get_formulaire_prediction(request: Request):
     return templates.TemplateResponse("template.html", {"request": request})
 
 # Prédiction des nouveaux cas
@@ -131,7 +131,7 @@ async def predict_all(
 
         return templates.TemplateResponse("template.html", {
             "request": request,
-            "prediction": f"{round(pred_cas)} cas / Tendance : {pred_tendance}",
+            "prediction": f"{round(pred_cas)} cas / Tendance épidémique : {pred_tendance}",
             "type": "all"
         })
 
