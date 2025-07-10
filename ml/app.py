@@ -6,6 +6,9 @@ from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 import joblib
 import numpy as np
+import os
+
+COUNTRY = os.getenv("COUNTRY", "ca") # par défaut, on utilise le Canada pour les modèles
 
 app = FastAPI(title="API COVID-19 – Modèles IA (Canada)")
 
@@ -24,6 +27,21 @@ model_tendance = joblib.load("model/modele_tendance_covid_rf.pkl")
 
 # Templates
 templates = Jinja2Templates(directory="templates")
+
+@app.get("/country")
+def get_country():
+    return {"pays actuel": COUNTRY}
+
+@app.get("predict-by-country")
+def get_predict_by_country():
+    if COUNTRY == "fr":
+        return {"model": "Modéles pour la France", "prediction": "Nouveaux cas et tendance épidémique"}
+    elif COUNTRY == "us":
+        return {"model": "Modèles pour les États-Unis", "prediction": "Nouveaux cas et tendance épidémique"}
+    elif COUNTRY == "ch":
+        return {"model": "Modèles pour la Suisse", "prediction": "Nouveaux cas et tendance épidémique"}
+    else:
+        return {"model": "Modèles pour le Canada", "prediction": "Nouveaux cas et tendance épidémique"}
 
 @app.get("/", response_class=HTMLResponse)
 async def get_formulaire_prediction(request: Request):
