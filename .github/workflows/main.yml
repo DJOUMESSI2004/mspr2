@@ -27,15 +27,15 @@ jobs:
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "✅ Build terminé"
+          subject: "Build terminé"
           body: |
             Le build a été effectué avec succès.
-            🔗 Voir les détails : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Voir les détails : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           to: ${{ secrets.TEAM_EMAILS }}
           from: ${{ secrets.EMAIL_USERNAME }}
 
   analyse:
-    name: Analyse du code (flake8)
+    name: Analyse du code
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -55,16 +55,17 @@ jobs:
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "🔍 Analyse de code terminée"
+          subject: "Analyse de code terminée"
           body: |
             L'analyse flake8 a été effectuée.
-            🔗 Voir les détails : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Voir les détails : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           to: ${{ secrets.TEAM_EMAILS }}
           from: ${{ secrets.EMAIL_USERNAME }}
 
   tests:
     name: Tests unitaires Pytest
     runs-on: ubuntu-latest
+    needs: analyse
     steps:
       - uses: actions/checkout@v3
       - name: Setup Python
@@ -89,10 +90,10 @@ jobs:
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "🧪 Résultats des tests"
+          subject: "Résultats des tests"
           body: |
             Résultat des tests : ${{ steps.tests.outcome }}
-            🔗 Voir les logs : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Voir les logs : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           to: ${{ secrets.TEAM_EMAILS }}
           from: ${{ secrets.EMAIL_USERNAME }}
 
@@ -111,12 +112,12 @@ jobs:
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "🚀 Déploiement simulé effectué"
+          subject: "Déploiement simulé effectué"
           body: |
             Le déploiement simulé a été effectué.
-            🔗 FR : https://fake.deploy/fr
-            🔗 US : https://fake.deploy/us
-            🔗 CH : https://fake.deploy/ch
-            🔗 Voir les détails : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            FR : https://fake.deploy/fr
+            US : https://fake.deploy/us
+            CH : https://fake.deploy/ch
+            Voir les détails : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           to: ${{ secrets.TEAM_EMAILS }}
           from: ${{ secrets.EMAIL_USERNAME }}
