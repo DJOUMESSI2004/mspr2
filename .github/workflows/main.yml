@@ -24,6 +24,18 @@ jobs:
         run: |
           docker-compose build
 
+      - name: Notification du build
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "✅ Build terminé avec succès"
+          body: "Les services ont été buildés avec succès."
+          to: ${{ secrets.TEAM_EMAILS }}
+          from: ${{ secrets.EMAIL_USERNAME }}
+
   analyse:
     name: Analyse du code (flake8)
     runs-on: ubuntu-latest
@@ -40,6 +52,17 @@ jobs:
         run: |
           cd ml
           flake8 . || true
+      - name: Notification analyse
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "🔍 Résultat de l'analyse flake8"
+          body: "L'analyse du code avec flake8 a été exécutée. Consultez les logs pour les détails."
+          to: ${{ secrets.TEAM_EMAILS }}
+          from: ${{ secrets.EMAIL_USERNAME }}
 
   tests:
     name: Tests unitaires Pytest
@@ -60,6 +83,20 @@ jobs:
         run: |
           export PYTHONPATH=$PYTHONPATH:$(pwd)/src
           pytest tests/
+      - name: Notification test
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "🧪 Résultat des tests Pytest"
+          body: |
+            Résultat des tests : ${{ steps.tests.outcome }}
+            Voir : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          to: ${{ secrets.TEAM_EMAILS }}
+          from: ${{ secrets.EMAIL_USERNAME }}
 
   simulate_deploy:
     name: Simulation de déploiement PowerShell
@@ -69,24 +106,14 @@ jobs:
       - name: Simuler le déploiement (FR, US, CH)
         run: |
           powershell.exe -ExecutionPolicy Bypass -File simulation_deploiement/simulate-ftp-deploy.ps1 -Countries fr,us,ch
-
-  notification:
-    name: Envoi de notification par email
-    needs: [tests]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Envoi e-mail résultat tests
-        if: always()
+      - name: Notification déploiement
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "Résultats des tests du pipeline MSPR2"
-          body: |
-            Les tests unitaires du backend ont été exécutés.
-            Résultat : ${{ steps.tests.outcome }}
-            Voir les détails : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          subject: "🚀 Simulation de déploiement effectuée"
+          body: "Le déploiement simulé a été exécuté pour les environnements FR, US et CH."
           to: ${{ secrets.TEAM_EMAILS }}
           from: ${{ secrets.EMAIL_USERNAME }}
