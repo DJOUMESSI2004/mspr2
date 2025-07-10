@@ -129,6 +129,10 @@ docker exec -it backend bash
 * Frontend (React/Vite) : [http://localhost:3000](http://localhost:3000)
 * PostgreSQL : port `5432`, utilisateur `user`, mot de passe `password`, base `etldb`
 
+```bash
+
 psql -h localhost -p 5432 -U user -d etldb
 
+note : psql doute être installé sur votre machine pour exécuter cette commande
 
+```
