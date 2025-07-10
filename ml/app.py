@@ -8,8 +8,7 @@ import joblib
 import numpy as np
 import os
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
+templates = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__), "templates"))
 
 COUNTRY = os.getenv("COUNTRY", "ca") # par défaut, on utilise le Canada pour les modèles
 
