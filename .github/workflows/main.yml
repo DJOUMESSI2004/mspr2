@@ -2,9 +2,9 @@ name: CI/CD MSPR2
 
 on:
   push:
-    branches: [main, model, etl]
+    branches: [master, model, etl]
   pull_request:
-
+    branches: [master, model, etl]
 jobs:
   build:
     name: Build des services
