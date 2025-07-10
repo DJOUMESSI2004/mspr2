@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend/client_mspr
+    ports:
+      - "5173:5173"
+
+  ml:
+    build:
+      context: ./ml
+    ports:
+      - "8000:8000"
+
+  etl:
+    build:
+      context: ./etl
+    container_name: etl
+    environment:
+      POSTGRES_DB: etldb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./etl:/docker-entrypoint-initdb.d
+
