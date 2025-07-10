@@ -1,12 +1,16 @@
+param([string[]]$Countries = @("fr", "us", "ch"))
 
-# scripts/simulate-ftp-deploy.ps1
-param([string]$EnvName)
+foreach ($Country in $Countries) {
+    $Target = "C:\\DeploySimulation\\$Country"
+    Write-Host "🚀 Simulation du déploiement pour le pays: $Country → $Target"
 
-$Target = "C:\DeploySimulation\$EnvName"
-Write-Host "🚀 Deploy $EnvName → $Target"
+    if (Test-Path $Target) {
+        Remove-Item $Target -Recurse -Force
+    }
+    New-Item -ItemType Directory -Path $Target | Out-Null
 
-if (Test-Path $Target) { Remove-Item $Target -Recurse -Force }
-New-Item -ItemType Directory -Path $Target | Out-Null
-Copy-Item -Path dist\* -Destination $Target -Recurse
+    # Copie les fichiers simulés (adapter le chemin si besoin)
+    Copy-Item -Path dist\* -Destination $Target -Recurse -Force
 
-Write-Host "✅ Simulation terminée"
+    Write-Host "✅ Déploiement simulé terminé pour $Country"
+}

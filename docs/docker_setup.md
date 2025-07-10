@@ -47,23 +47,29 @@ Endpoints simulés :
 * Localisé dans : `frontend/client_mspr/`
 * Port : `3000`
 
-## Script de simulation de déploiement local (PowerShell)
+ Script de simulation de déploiement local (PowerShell)
 
-Le fichier `simulate-ftp-deploy.ps1` permet de simuler un déploiement local dans un dossier `C:\DeploySimulation\<NomEnv>` :
+Le fichier `simulate-ftp-deploy.ps1` permet de simuler un déploiement local pour plusieurs pays dans des dossiers comme `C:\DeploySimulation\fr`, `C:\DeploySimulation\us`, etc.
 
-### `simulation_deploiement/simulate-ftp-deploy.ps1`
+### 📄 `simulation_deploiement/simulate-ftp-deploy.ps1`
 
 ```powershell
-param([string]$EnvName)
+param([string[]]$Countries = @("fr", "us", "ch"))
 
-$Target = "C:\DeploySimulation\$EnvName"
-Write-Host " Deploy $EnvName → $Target"
+foreach ($Country in $Countries) {
+    $Target = "C:\\DeploySimulation\\$Country"
+    Write-Host "🚀 Simulation du déploiement pour le pays: $Country → $Target"
 
-if (Test-Path $Target) { Remove-Item $Target -Recurse -Force }
-New-Item -ItemType Directory -Path $Target | Out-Null
-Copy-Item -Path dist\* -Destination $Target -Recurse
+    if (Test-Path $Target) {
+        Remove-Item $Target -Recurse -Force
+    }
+    New-Item -ItemType Directory -Path $Target | Out-Null
 
-Write-Host "Simulation terminée"
+    # Copie les fichiers simulés (adapter le chemin si besoin)
+    Copy-Item -Path dist\* -Destination $Target -Recurse -Force
+
+    Write-Host "✅ Déploiement simulé terminé pour $Country"
+}
 ```
 
 ## docker-compose.yml - version multi-pays
