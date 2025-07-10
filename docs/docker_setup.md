@@ -11,6 +11,7 @@ MSPR2/
 ├── etl/                        # Contient les scripts SQL pour PostgreSQL
 ├── ml/                         # Contient app.py (FastAPI)
 ├── frontend/client_mspr/       # Contient l'application front-end (React/Vite)
+├── simulation_deploiement/     # Contient le script PowerShell de simulation
 ├── docker-compose.yml          # Fichier central de déploiement
 ```
 
@@ -95,6 +96,27 @@ services:
       - ./frontend/client_mspr:/app
     working_dir: /app
     command: ["npm", "run", "dev"]
+```
+
+## Script de simulation de déploiement local (PowerShell)
+
+Le fichier `simulate-ftp-deploy.ps1` permet de simuler un déploiement local dans un dossier `C:\DeploySimulation\<NomEnv>` :
+En gros nous simulons un déploiement FTP en copiant les fichiers dans un répertoire spécifique.
+Ceci est utile pour tester le processus de déploiement vers un VPS ou un serveur FTP sans avoir besoin d'un serveur FTP réel.
+
+### `simulation_deploiement/simulate-ftp-deploy.ps1`
+
+```powershell
+param([string]$EnvName)
+
+$Target = "C:\DeploySimulation\$EnvName"
+Write-Host "🚀 Deploy $EnvName → $Target"
+
+if (Test-Path $Target) { Remove-Item $Target -Recurse -Force }
+New-Item -ItemType Directory -Path $Target | Out-Null
+Copy-Item -Path dist\* -Destination $Target -Recurse
+
+Write-Host "✅ Simulation terminée"
 ```
 
 ## Commandes utiles pour la gestion des conteneurs
