@@ -63,9 +63,8 @@ jobs:
           from: ${{ secrets.EMAIL_USERNAME }}
 
   tests:
-    name: Tests unitaires
+    name: Tests unitaires Pytest
     runs-on: ubuntu-latest
-    needs: analyse
     steps:
       - uses: actions/checkout@v3
       - name: Setup Python
@@ -73,10 +72,15 @@ jobs:
         with:
           python-version: '3.12'
       - name: Installer dépendances
-        run: pip install -r ml/requirements.txt
-      - name: Exécuter les tests
+        working-directory: ./ml
+        run: |
+          pip install -r requirements.txt
+      - name: Exécuter les tests Pytest
         id: tests
-        run: pytest ml/tests
+        working-directory: ./ml
+        run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)/src
+          pytest tests/
       - name: Notification Tests
         if: always()
         uses: dawidd6/action-send-mail@v3
