@@ -13,32 +13,31 @@ jobs:
     steps:
       - name: Récupération du code
         uses: actions/checkout@v3
-
-      - name: Installer Docker Compose (manuellement)
+      - name: Installer Docker Compose
         run: |
           sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose version
-
       - name: Build des images Docker
-        run: |
-          docker-compose build
-
-      - name: Notification du build
+        run: docker-compose build
+      - name: Notification Build
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "✅ Build terminé avec succès"
-          body: "Les services ont été buildés avec succès."
+          subject: "✅ Build terminé"
+          body: |
+            Le build a été effectué avec succès.
+            🔗 Voir les détails : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           to: ${{ secrets.TEAM_EMAILS }}
           from: ${{ secrets.EMAIL_USERNAME }}
 
   analyse:
     name: Analyse du code (flake8)
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - uses: actions/checkout@v3
       - name: Setup Python
@@ -46,27 +45,27 @@ jobs:
         with:
           python-version: '3.12'
       - name: Installer flake8
-        run: |
-          pip install flake8
-      - name: Exécuter flake8 sur /ml
-        run: |
-          cd ml
-          flake8 . || true
-      - name: Notification analyse
+        run: pip install flake8
+      - name: Exécuter flake8
+        run: cd ml && flake8 . || true
+      - name: Notification Analyse
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "🔍 Résultat de l'analyse flake8"
-          body: "L'analyse du code avec flake8 a été exécutée. Consultez les logs pour les détails."
+          subject: "🔍 Analyse de code terminée"
+          body: |
+            L'analyse flake8 a été effectuée.
+            🔗 Voir les détails : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           to: ${{ secrets.TEAM_EMAILS }}
           from: ${{ secrets.EMAIL_USERNAME }}
 
   tests:
-    name: Tests unitaires Pytest
+    name: Tests unitaires
     runs-on: ubuntu-latest
+    needs: analyse
     steps:
       - uses: actions/checkout@v3
       - name: Setup Python
@@ -74,16 +73,11 @@ jobs:
         with:
           python-version: '3.12'
       - name: Installer dépendances
-        working-directory: ./ml
-        run: |
-          pip install -r requirements.txt
-      - name: Exécuter les tests Pytest
+        run: pip install -r ml/requirements.txt
+      - name: Exécuter les tests
         id: tests
-        working-directory: ./ml
-        run: |
-          export PYTHONPATH=$PYTHONPATH:$(pwd)/src
-          pytest tests/
-      - name: Notification test
+        run: pytest ml/tests
+      - name: Notification Tests
         if: always()
         uses: dawidd6/action-send-mail@v3
         with:
@@ -91,29 +85,34 @@ jobs:
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "🧪 Résultat des tests Pytest"
+          subject: "🧪 Résultats des tests"
           body: |
             Résultat des tests : ${{ steps.tests.outcome }}
-            Voir : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            🔗 Voir les logs : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           to: ${{ secrets.TEAM_EMAILS }}
           from: ${{ secrets.EMAIL_USERNAME }}
 
   simulate_deploy:
-    name: Simulation de déploiement PowerShell
+    name: Simulation de déploiement
     runs-on: windows-latest
+    needs: tests
     steps:
       - uses: actions/checkout@v3
       - name: Simuler le déploiement (FR, US, CH)
-        run: |
-          powershell.exe -ExecutionPolicy Bypass -File simulation_deploiement/simulate-ftp-deploy.ps1 -Countries fr,us,ch
-      - name: Notification déploiement
+        run: powershell.exe -ExecutionPolicy Bypass -File simulation_deploiement/simulate-ftp-deploy.ps1 -Countries fr,us,ch
+      - name: Notification Déploiement
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "🚀 Simulation de déploiement effectuée"
-          body: "Le déploiement simulé a été exécuté pour les environnements FR, US et CH."
+          subject: "🚀 Déploiement simulé effectué"
+          body: |
+            Le déploiement simulé a été effectué.
+            🔗 FR : https://fake.deploy/fr
+            🔗 US : https://fake.deploy/us
+            🔗 CH : https://fake.deploy/ch
+            🔗 Voir les détails : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           to: ${{ secrets.TEAM_EMAILS }}
           from: ${{ secrets.EMAIL_USERNAME }}
