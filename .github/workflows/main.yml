@@ -1,15 +1,13 @@
-name: MSPR2 CI/CD Pipeline
+name: CI/CD MSPR2
 
 on:
   push:
     branches: [main, model, etl]
-  pull_request: 
-    branches: [main, model, etl]
+  pull_request:
 
 jobs:
-
   build:
-    name: \U0001F527 Build des services
+    name: Build des services
     runs-on: ubuntu-latest
     steps:
       - name: Récupération du code
@@ -20,7 +18,7 @@ jobs:
           docker-compose build
 
   analyse:
-    name: \U0001F50E Analyse du code (flake8)
+    name: Analyse du code (flake8)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -37,7 +35,7 @@ jobs:
           flake8 .
 
   tests:
-    name: \U0001F52C Tests unitaires Pytest
+    name: Tests unitaires Pytest
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -57,7 +55,7 @@ jobs:
           pytest tests/
 
   simulate_deploy:
-    name: \U0001F4E6 Simulation de déploiement PowerShell
+    name: Simulation de déploiement PowerShell
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
@@ -66,7 +64,7 @@ jobs:
           powershell.exe -ExecutionPolicy Bypass -File simulation_deploiement/simulate-ftp-deploy.ps1 -Countries fr,us,ch
 
   notification:
-    name: \U0001F4E7 Envoi de notification par email
+    name: Envoi de notification par email
     needs: [tests]
     runs-on: ubuntu-latest
     steps:
