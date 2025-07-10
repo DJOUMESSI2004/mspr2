@@ -2,7 +2,7 @@
 
 ![Couverture Projet MSPR](assets/architecture.png)
 
-## 📋 Cahier des Charges
+## Cahier des Charges
 
 **Bloc de Compétences E6.2**  
 Développer un modèle prédictif d'une solution I.A.
@@ -12,7 +12,7 @@ Développer un modèle prédictif d'une solution I.A.
 - Développement et déploiement d'une application respectant le cahier des charges Client.
 - Développement applicatif utilisant une API IA.
 
-## 🏆 Compétences Évaluées
+## Compétences Évaluées
 
 - Générer, récolter et adapter les données d'entrée nécessaires au modèle d'apprentissage.
 - Paramétrer un environnement de codage adéquat pour développer le modèle.
@@ -21,7 +21,7 @@ Développer un modèle prédictif d'une solution I.A.
 - Réaliser une phase de test pour évaluer les performances du modèle.
 - Ajuster l’apprentissage du modèle en fonction des résultats obtenus.
 
-## 📦 Livrables Attendus
+## Livrables Attendus
 
 1. Documentation détaillée :
     - Choix de l'algorithme utilisé.
@@ -40,26 +40,26 @@ Développer un modèle prédictif d'une solution I.A.
 
 7. Documentation relative à la conduite au changement (accessibilité).
 
-## 🚀 Résultat Attendu
+## Résultat Attendu
 
 - Création d’un Front-End en cohérence avec les besoins exprimés.
 - Modification de l’API existante.
 - Entraînement d’une IA performante.
 - Réalisation d’un tableau de bord de dataviz.
 
-## ⚙️ Méthodologie
+## Méthodologie
 
 - Approche Agile avec feedback continu vers les commanditaires.
 - Gestion de projet évolutive selon les besoins de l'OMS.
 
-## ⏳ Phase 1 : Préparation
+## Phase 1 : Préparation
 
 - **Durée de préparation :** 19 heures.
 - **Travail en équipe :** 4 apprenants (5 maximum si groupe impair).
 
 ---
 
-## 📌 Phases Clés du Projet
+## Phases Clés du Projet
 
 1. Préparation des données (ETL, nettoyage, formatage).
 2. Modélisation et entraînement du modèle IA.
@@ -70,7 +70,7 @@ Développer un modèle prédictif d'une solution I.A.
 
 ---
 
-## 🔗 Technologies Possibles
+## Technologies Possibles
 
 - **Backend / API IA:** [Python](https://www.python.org/) ([Flask](https://flask.palletsprojects.com/), [FastAPI](https://fastapi.tiangolo.com/))
 - **Modèle IA:** [Scikit-learn](https://scikit-learn.org/stable/), [TensorFlow](https://www.tensorflow.org/), [PyTorch](https://pytorch.org/)
@@ -81,22 +81,17 @@ Développer un modèle prédictif d'une solution I.A.
 
 ---
 
-## 👥 Équipe Projet
-
-En cours....
-
 ---
 
-## 📣 Communication
+## Communication
 
 - Suivi de projet en méthode Agile.
 - Reporting régulier vers les commanditaires.
 
 ---
 
-## 🔄 Gestion des Évolutions
+## Gestion des Évolutions
 
 - Le projet évoluera selon les besoins et les retours de l'OMS.
 - Les jalons et la planification seront mis à jour en continu.
-
----
+- 
