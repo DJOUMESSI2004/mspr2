@@ -1,0 +1,87 @@
+name: MSPR2 CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, model, etl]
+  pull_request: 
+    branches: [main, model, etl]
+
+jobs:
+
+  build:
+    name: \U0001F527 Build des services
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v3
+
+      - name: Build des images Docker
+        run: |
+          docker-compose build
+
+  analyse:
+    name: \U0001F50E Analyse du code (flake8)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      - name: Installer flake8
+        run: |
+          pip install flake8
+      - name: Exécuter flake8 sur /ml
+        run: |
+          cd ml
+          flake8 .
+
+  tests:
+    name: \U0001F52C Tests unitaires Pytest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      - name: Installer dépendances
+        working-directory: ./ml
+        run: |
+          pip install -r requirements.txt
+      - name: Exécuter les tests Pytest
+        id: tests
+        working-directory: ./ml
+        run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)/src
+          pytest tests/
+
+  simulate_deploy:
+    name: \U0001F4E6 Simulation de déploiement PowerShell
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Simuler le déploiement (FR, US, CH)
+        run: |
+          powershell.exe -ExecutionPolicy Bypass -File simulation_deploiement/simulate-ftp-deploy.ps1 -Countries fr,us,ch
+
+  notification:
+    name: \U0001F4E7 Envoi de notification par email
+    needs: [tests]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Envoi e-mail résultat tests
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "Résultats des tests du pipeline MSPR2"
+          body: |
+            Les tests unitaires du backend ont été exécutés.
+            Résultat : ${{ steps.tests.outcome }}
+            Voir les détails : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          to: ${{ secrets.TEAM_EMAILS }}
+          from: ${{ secrets.EMAIL_USERNAME }}
