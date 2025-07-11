@@ -53,23 +53,34 @@ jobs:
     runs-on: ubuntu-latest
     needs: build  # Dépend du succès du job build
     steps:
-      - uses: actions/checkout@v3
-      
+      - name: Checkout du code
+        uses: actions/checkout@v3
+
       # Configuration de l'environnement Python
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
-      
-      # Installation de l'outil d'analyse flake8
+
+      # Installation de flake8
       - name: Installer flake8
         run: pip install flake8
-      
-      # Exécution de l'analyse (|| true évite l'échec du job si des warnings sont trouvés)
+
+      # Exécution de flake8 et enregistrement des erreurs dans un fichier
       - name: Exécuter flake8
-        run: cd ml && flake8 . || true
-      
-      # Notification des résultats d'analyse
+        run: |
+          cd ml
+          flake8 . > ../flake8_output.txt || true
+
+      # Lecture du contenu du fichier d'erreurs pour l'utiliser dans l'e-mail
+      - name: Lire le rapport flake8
+        id: rapport
+        run: |
+          echo "content<<EOF" >> $GITHUB_OUTPUT
+          cat flake8_output.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      # Envoi d'un e-mail avec les résultats
       - name: Notification Analyse
         uses: dawidd6/action-send-mail@v3
         with:
@@ -77,10 +88,16 @@ jobs:
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "Analyse de code terminée"
+          subject: "Résultat de l'analyse flake8"
           body: |
             L'analyse flake8 a été effectuée.
-            Voir les détails : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            Résultats de l'analyse :
+            -----------------------------------
+            ${{ steps.rapport.outputs.content }}
+
+            Voir le run complet ici :
+            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           to: ${{ secrets.TEAM_EMAILS }}
           from: ${{ secrets.EMAIL_USERNAME }}
 
