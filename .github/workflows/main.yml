@@ -1,15 +1,15 @@
 # CI/CD Pipeline pour le projet MSPR2
 # Pipeline automatisé qui inclut : build, analyse, tests et simulation de déploiement
-name: CI/CD MSPR2
+name: CI/CD déploiement d'un solution IA pour l'OMS
 
 # Déclencheurs du workflow
 on:
   # Déclenché sur push vers les branches principales
   push:
-    branches: [master, model, etl]
+    branches: [master]
   # Déclenché sur les pull requests vers ces branches
   pull_request:
-    branches: [master, model, etl]
+    branches: [master]
 
 jobs:
   # Job 1: Construction des images Docker
